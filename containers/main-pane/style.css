@@ -1,0 +1,7 @@
+.pane {
+  min-width: 10%;
+  width: 60%;
+  max-width: 70%;
+  height: 100%;
+  float: left;
+}
