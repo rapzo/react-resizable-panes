@@ -4,19 +4,19 @@ import Border from '../../components/border'
 import style from './style.css'
 
 export default class LeftPane extends Component {
-  constructor () {
-    super()
+  constructor (props) {
+    super(props)
 
-    this.state = {
-      size: style.pane.size
+    this.style = {
+      width: `${props.border + props.pane}px`
     }
   }
 
   render () {
     return (
-      <section className={style.pane}>
-        <Pane />
-        <Border />
+      <section style={this.style} className={style.pane}>
+        <Pane size={this.props.pane} />
+        <Border size={this.props.border} />
       </section>
     )
   }

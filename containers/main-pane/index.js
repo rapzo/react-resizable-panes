@@ -4,12 +4,8 @@ import Border from '../../components/border'
 import style from './style.css'
 
 export default class MainPane extends Component {
-  constructor () {
-    super()
-
-    this.state = {
-      size: style.pane.size
-    }
+  constructor (props) {
+    super(props)
   }
 
   render () {
