@@ -1,38 +1,42 @@
-import { Action } from './actions'
-import { FluxStore } from 'flux/utils'
+import { EventEmitter } from 'events'
+import reducers from './reducers'
+import {
+  HIDE_LEFT,
+  HIDE_RIGHT,
+  RESIZE_LEFT,
+  RESIZE_RIGHT,
+  SELECT
+} from './actions'
 
-export default class CoordStore extends FluxStore {
-  constructor () {
-    super()
+const initialState = {
+  hide: {
+    left: false,
+    right: false
+  },
+  select: false,
+  resize: {
+    offset: 0
   }
+}
 
-  getInitialState() {
-    return [{
-      hide: {
-        right: false,
-        left: false
-      },
-      resize: 0,
-      hover: false
-    }]
-  }
+export default (action, state) => {
+  switch (action.type) {
+    case HIDE_RIGHT:
+      return { hide: { right: true }, ...state }
 
-  reduce (state, action) {
-    switch (action.type) {
-      case 'hide right':
-        return { ...state, hide: { right: true } }
+    case HIDE_LEFT:
+      return { hide: { left: true }, ...state }
 
-      case 'hide left':
-        return { ...state, hide: { left: true } }
+    case RESIZE_RIGHT:
+      return { ...state }
 
-      case 'resize left':
-        return { ...state }
+    case RESIZE_LEFT:
+      return { ...state}
 
-      case 'resize right':
-        return { ...state}
+    case SELECT:
+      return reducer[SELECT](action, state)
 
-      default:
-        return state
-    }
+    default:
+      return state
   }
 }
