@@ -5,14 +5,42 @@ export default class Pane extends Component {
   constructor (props) {
     super(props)
 
-    this.style = {
-      width: `${props.size}px`
+    this.state = {
+      hover: false,
+      hidden: false
     }
   }
 
+  handleKey (e) {
+    console.log(e)
+  }
+
+  handleEnter () {
+    this.setState({
+      hover: true
+    })
+  }
+
+  handleOut () {
+    this.setState({
+      hover: false
+    })
+  }
+
   render () {
+    const width = {
+      width: `${this.props.width}px`
+    }
+
     return (
-      <div style={this.style} className={style.pane}></div>
+      <div
+        style={width}
+        className={style.pane}
+        onMouseEnter={::this.handleEnter}
+        onMouseOut={::this.handleOut}
+      >
+        <p>Mouse hover: {String(this.state.hover)}</p>
+      </div>
     )
   }
 }

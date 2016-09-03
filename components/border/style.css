@@ -2,4 +2,5 @@
   background: black;
   height: 100%;
   float: left;
+  cursor: col-resize;
 }

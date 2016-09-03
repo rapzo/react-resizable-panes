@@ -1,0 +1,5 @@
+export const HIDE_LEFT = 'hide left'
+export const HIDE_RIGHT = 'hide right'
+export const RESIZE_LEFT = 'resize left'
+export const RESIZE_RIGHT = 'resize left'
+export const HOVER = 'hover'
