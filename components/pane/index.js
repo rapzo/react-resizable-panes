@@ -6,13 +6,9 @@ export default class Pane extends Component {
     super(props)
 
     this.state = {
-      hover: false,
+      selected: false,
       hidden: false
     }
-  }
-
-  handleKey (e) {
-    console.log(e)
   }
 
   handleEnter () {
@@ -28,13 +24,16 @@ export default class Pane extends Component {
   }
 
   render () {
-    const width = {
-      width: `${this.props.width}px`
+    this.state.selected = this.props.store.select && this.state.hover
+
+    const styles = {
+      width: `${this.props.width}px`,
+      background: this.state.selected ? 'green' : 'red'
     }
 
     return (
       <div
-        style={width}
+        style={styles}
         className={style.pane}
         onMouseEnter={::this.handleEnter}
         onMouseOut={::this.handleOut}

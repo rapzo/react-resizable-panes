@@ -3,10 +3,17 @@ import { Dispatcher } from 'flux'
 import Pane from '../../components/pane'
 import Border from '../../components/border'
 import store from '../../store'
+import {
+  HIDE_LEFT,
+  HIDE_RIGHT,
+  RESIZE_LEFT,
+  RESIZE_RIGHT,
+  SELECT
+} from '../../store/actions'
 
 import style from './style.css'
 
-const State = {
+const initialState = () => ({
   hide: {
     left: false,
     right: false
@@ -14,11 +21,11 @@ const State = {
   select: false,
   resize: {
     offset: 0
-  }
-}
+  },
+  size: 0
+})
 
 const AppDispatcher = new Dispatcher()
-AppDispatcher.register(store)
 
 const defaults = {
   panes: 3,
@@ -33,17 +40,19 @@ const resize = (width) => ({
   )
 })
 
+AppDispatcher.register(store)
+
 export default class App extends Component {
   constructor () {
     super()
 
     this.state = {
-      size: resize(window.innerWidth),
-      control: false
+      size: resize(window.innerWidth)
     }
   }
 
   componentDidMount () {
+    this.setState(initialState())
     window.addEventListener('resize', () => this.handleResize())
     document.addEventListener('keydown', (e) => this.handleKeyDown(e))
   }
@@ -73,6 +82,7 @@ export default class App extends Component {
         return;
       case 82:
         console.log('ctrl+r')
+        this.setState(store(SELECT, this.state))
         return;
       case 88:
         console.log('linux test')
@@ -85,11 +95,11 @@ export default class App extends Component {
   render () {
     return (
       <section className={style.panes}>
-        <Pane width={this.state.size.pane} store={store} />
+        <Pane width={this.state.size.pane} store={this.state} />
         <Border width={this.state.size.border} />
-        <Pane width={this.state.size.pane} store={store} />
+        <Pane width={this.state.size.pane} store={this.state} />
         <Border width={this.state.size.border} />
-        <Pane width={this.state.size.pane} store={store} />
+        <Pane width={this.state.size.pane} store={this.state} />
       </section>
     )
   }

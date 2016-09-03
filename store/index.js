@@ -8,19 +8,12 @@ import {
   SELECT
 } from './actions'
 
-const initialState = {
-  hide: {
-    left: false,
-    right: false
-  },
-  select: false,
-  resize: {
-    offset: 0
-  }
-}
+const panes = new Set()
+const borders = new Set()
 
 export default (action, state) => {
-  switch (action.type) {
+  console.log(action)
+  switch (action) {
     case HIDE_RIGHT:
       return { hide: { right: true }, ...state }
 
@@ -34,7 +27,8 @@ export default (action, state) => {
       return { ...state}
 
     case SELECT:
-      return reducer[SELECT](action, state)
+      console.log('ohai', state)
+      return reducers[SELECT](state)
 
     default:
       return state

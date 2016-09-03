@@ -23,8 +23,7 @@ export default {
 
   },
 
-  [SELECT] (state, action) {
-    console.log(state, action)
-    return { select: true, ...state }
+  [SELECT] (state) {
+    return { ...state, select: !state.select }
   }
 }
