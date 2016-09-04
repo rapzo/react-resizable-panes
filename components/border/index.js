@@ -16,22 +16,9 @@ export default class Border extends Component {
     const { border, dispatch } = this.props
 
     console.log(
-      `dragging #${border.id}(${border.name}) clientX: ${e.clientX}; state: ${this.state.x}`
+      `dragging #${border.id}(${border.name}) clientX: ${e.clientX}; state: ${this.state.x}; e: ${border.x}`
     )
     if (e.clientX <= 0 || e.clientX === this.state.x) return;
-
-    dispatch(actions(RESIZE, {
-      id: border.id,
-      offset: e.clientX - this.state.x
-    }))
-
-    this.setState({
-      x: e.clientX - this.state.x
-    })
-  }
-
-  handleDragEnter () {
-    console.log('enter dragging')
   }
 
   handleDragStart () {
@@ -42,44 +29,28 @@ export default class Border extends Component {
   }
 
   handleDragEnd (e) {
+    const { border, dispatch } = this.props
     console.log('end dragging')
-    this.setState({
-      position: 'relative',
-      x: e.clientX - this.state.x
-    })
-  }
-
-  handleDragExit () {
-    console.log('exit dragging')
-  }
-
-  handleDragLeave () {
-    console.log('leave dragging')
-  }
-
-  handleDragOver () {
-    console.log('over dragging')
+    dispatch(actions(RESIZE, {
+      id: border.id,
+      offset: e.clientX
+    }))
+    this.forceUpdate()
   }
 
   render () {
     const { border } = this.props
-    const { x, position } = this.state
     const styles = {
-      width: `${border.width}px`,
-      position: position,
-      left: `${x}px`
+      width: `${border.width}px`
     }
 
     return (
       <div
         style={styles}
         className={style.border}
+        draggable={true}
         onDrag={::this.handleDrag}
-        onDragEnter={::this.handleDragEnter}
-        onDragExit={::this.handleDragExit}
         onDragStart={::this.handleDragStart}
-        onDragOver={::this.handleDragOver}
-        onDragLeave={::this.handleDragLeave}
         onDragEnd={::this.handleDragEnd}
       ></div>
     )
