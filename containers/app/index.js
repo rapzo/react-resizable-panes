@@ -1,58 +1,46 @@
 import React, { Component } from 'react'
-import { Dispatcher } from 'flux'
 import Pane from '../../components/pane'
 import Border from '../../components/border'
-import store from '../../store'
-import {
-  HIDE_LEFT,
-  HIDE_RIGHT,
-  RESIZE_LEFT,
-  RESIZE_RIGHT,
-  SELECT
-} from '../../store/actions'
-
+import { store } from '../../store'
+import actions, { HIDE_LEFT, HIDE_RIGHT } from '../../store/actions'
 import style from './style.css'
 
-const initialState = () => ({
-  hide: {
-    left: false,
-    right: false
-  },
-  select: false,
-  resize: {
-    offset: 0
-  },
-  size: 0
-})
-
-const AppDispatcher = new Dispatcher()
-
+// default properties for this test case
 const defaults = {
   panes: 3,
   borders: 2,
   borderSize: 6
 }
 
-const resize = (width) => ({
-  border: defaults.borderSize,
-  pane: Math.floor(
-    (width - (defaults.borders * defaults.borderSize)) / defaults.panes
-  )
+// calculates the initial state based on the window size
+const initialState = (size) => ({
+  rows: [{
+    panes: defaults.panes,
+    borders: defaults.borders
+  }],
+  size
 })
 
-AppDispatcher.register(store)
+// helper so math is not spreaded all around
+const resize = (width) => ({
+  border: defaults.borderSize,
+  pane: (width - (defaults.borders * defaults.borderSize)) / defaults.panes
+})
+
+// reference for the initial, unpainted window state
+const state = initialState(resize(window.innerWidth))
+
+// sets up the state machine
+const { dispatcher, rows } = store(state)
 
 export default class App extends Component {
   constructor () {
     super()
 
-    this.state = {
-      size: resize(window.innerWidth)
-    }
+    this.state = state
   }
 
   componentDidMount () {
-    this.setState(initialState())
     window.addEventListener('resize', () => this.handleResize())
     document.addEventListener('keydown', (e) => this.handleKeyDown(e))
   }
@@ -74,15 +62,13 @@ export default class App extends Component {
     e.preventDefault()
 
     switch (e.keyCode) {
-      case 72:
-        console.log('ctrl+h')
-        return;
       case 76:
         console.log('ctrl+l')
+        dispatcher.dispatch(actions(HIDE_LEFT))
         return;
       case 82:
         console.log('ctrl+r')
-        this.setState(store(SELECT, this.state))
+        dispatcher.dispatch(actions(HIDE_RIGHT))
         return;
       case 88:
         console.log('linux test')
@@ -93,13 +79,14 @@ export default class App extends Component {
   }
 
   render () {
+    const items = rows[0]
+
     return (
       <section className={style.panes}>
-        <Pane width={this.state.size.pane} store={this.state} />
-        <Border width={this.state.size.border} />
-        <Pane width={this.state.size.pane} store={this.state} />
-        <Border width={this.state.size.border} />
-        <Pane width={this.state.size.pane} store={this.state} />
+        {items.map((item, i) => i % 2 === 0 ?
+          <Pane key={i} dispatch={::dispatcher.dispatch} pane={item} /> :
+          <Border key={i} dispatch={::dispatcher.dispatch} border={item} />
+        )}
       </section>
     )
   }

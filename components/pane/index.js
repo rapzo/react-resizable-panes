@@ -6,12 +6,38 @@ export default class Pane extends Component {
     super(props)
 
     this.state = {
+      hover: false,
       selected: false,
-      hidden: false
+      hidden: false,
+    }
+  }
+
+  componentDidMount () {
+    document.addEventListener('keydown', (e) => this.handleKeyDown(e))
+  }
+
+  componentWillUnmount () {
+    document.removeEventListener('keydown', (e) => this.handleKeyDown(e))
+  }
+
+  handleKeyDown (e) {
+    if (!this.state.hover || !e.ctrlKey) return;
+
+    // `r` key
+    if (e.keyCode === 72) {
+      e.preventDefault()
+
+      this.setState({
+        selected: !this.state.selected
+      })
     }
   }
 
   handleEnter () {
+    // if already there - for changing windows situations that would trigger a
+    // re-render
+    if (this.state.hover) return;
+
     this.setState({
       hover: true
     })
@@ -24,11 +50,11 @@ export default class Pane extends Component {
   }
 
   render () {
-    this.state.selected = this.props.store.select && this.state.hover
-
+    const { pane } = this.props
+    const { selected } = this.state
     const styles = {
-      width: `${this.props.width}px`,
-      background: this.state.selected ? 'green' : 'red'
+      width: `${pane.width}px`,
+      background: selected ? 'green' : 'red'
     }
 
     return (
@@ -38,7 +64,10 @@ export default class Pane extends Component {
         onMouseEnter={::this.handleEnter}
         onMouseOut={::this.handleOut}
       >
-        <p>Mouse hover: {String(this.state.hover)}</p>
+        <ul>
+          <li>Mouse hover: <strong>{String(this.state.hover)}</strong></li>
+          <li>Width: <strong>{styles.width}</strong></li>
+        </ul>
       </div>
     )
   }

@@ -1,36 +1,44 @@
-import { EventEmitter } from 'events'
-import reducers from './reducers'
-import {
-  HIDE_LEFT,
-  HIDE_RIGHT,
-  RESIZE_LEFT,
-  RESIZE_RIGHT,
-  SELECT
-} from './actions'
+import { Dispatcher } from 'flux'
+import Pane from './pane'
+import Border from './border'
+import { HIDE_LEFT, HIDE_RIGHT, RESIZE } from './actions'
 
-const panes = new Set()
-const borders = new Set()
 
-export default (action, state) => {
-  console.log(action)
-  switch (action) {
-    case HIDE_RIGHT:
-      return { hide: { right: true }, ...state }
 
-    case HIDE_LEFT:
-      return { hide: { left: true }, ...state }
+export const store = (setup) => {
+  const rows = setup.rows.map((row) => [
+    new Pane('left', { width: setup.size.pane }),
+    new Border('left', { width: setup.size.border }),
+    new Pane('main', { width: setup.size.pane }),
+    new Border('right', { width: setup.size.border }),
+    new Pane('right', { width: setup.size.pane })
+  ])
 
-    case RESIZE_RIGHT:
-      return { ...state }
+  const actions = (action) => {
+    switch (action.type) {
+      case HIDE_LEFT:
+        console.log(action)
+        return {}
 
-    case RESIZE_LEFT:
-      return { ...state}
+      case HIDE_RIGHT:
+        console.log(action)
+        return {}
 
-    case SELECT:
-      console.log('ohai', state)
-      return reducers[SELECT](state)
+      case RESIZE:
+        console.log(action)
+        return {}
 
-    default:
-      return state
+      default:
+        return
+    }
+  }
+
+  const dispatcher = new Dispatcher()
+
+  dispatcher.register(actions)
+
+  return {
+    dispatcher,
+    rows
   }
 }
