@@ -8,47 +8,81 @@ export default class Border extends Component {
 
     this.state = {
       position: 'relative',
-      x: 0
+      x: 0,
+      moved: false,
+      locked: false,
+      grabbed: false,
+      hidden: false
     }
+  }
+
+  componentDidMount () {
+    const { border, trigger } = this.props
+
+    trigger(border.id, (payload) => this.handleUpdate(payload))
+  }
+
+  componentWillUnmount () {
+    const { border, release } = this.props
+
+    release(border.id, (payload) => this.handleUpdate(payload))
+  }
+
+  handleUpdate ({ width = 0 }) {
+    this.setState({ width })
+  }
+
+  handleGrab (e) {
+    this.setState({ grabbed: true, x: e.target.offsetLeft })
+  }
+
+  handleRelease (e) {
+    this.setState({ grabbed: false, x: e.target.offsetLeft })
   }
 
   handleDrag (e) {
     const { border, dispatch } = this.props
 
-    console.log(
-      `dragging #${border.id}(${border.name}) clientX: ${e.clientX}; state: ${this.state.x}; e: ${border.x}`
-    )
-    if (e.clientX <= 0 || e.clientX === this.state.x) return;
+    if (e.clientX <= 0) return
+
+    dispatch(actions(RESIZE, {
+      id: border.id,
+      offset: e.clientX
+    }))
   }
 
   handleDragStart () {
-    console.log('start dragging')
     this.setState({
-      // position: 'absolute'
+      dragging: true
     })
   }
 
   handleDragEnd (e) {
     const { border, dispatch } = this.props
-    console.log('end dragging')
+
     dispatch(actions(RESIZE, {
       id: border.id,
       offset: e.clientX
     }))
-    this.forceUpdate()
+
+    this.setState({
+      dragging: false
+    })
   }
 
   render () {
     const { border } = this.props
     const styles = {
-      width: `${border.width}px`
+      width: `${border.width}px`,
+      display: border.hidden ? 'none' : 'block'
     }
 
     return (
       <div
         style={styles}
         className={style.border}
-        draggable={true}
+        onMouseDown={::this.handleGrab}
+        onMouseUp={::this.handleRelease}
         onDrag={::this.handleDrag}
         onDragStart={::this.handleDragStart}
         onDragEnd={::this.handleDragEnd}

@@ -31,13 +31,16 @@ const resize = (width) => ({
 const state = initialState(resize(window.innerWidth))
 
 // sets up the state machine
-const { dispatcher, rows } = store(state)
+const { dispatcher, stores } = store(state)
 
 export default class App extends Component {
   constructor () {
     super()
 
-    this.state = state
+    this.state = {
+      items: stores,
+      ...state
+    }
   }
 
   componentDidMount () {
@@ -63,15 +66,12 @@ export default class App extends Component {
 
     switch (e.keyCode) {
       case 76:
-        console.log('ctrl+l')
         dispatcher.dispatch(actions(HIDE_LEFT))
         return;
       case 82:
-        console.log('ctrl+r')
         dispatcher.dispatch(actions(HIDE_RIGHT))
         return;
       case 88:
-        console.log('linux test')
         return;
       default:
         return;
@@ -79,13 +79,14 @@ export default class App extends Component {
   }
 
   render () {
-    const items = rows[0]
+    const store = this.state.items[0]
+    const { items } = store
 
     return (
       <section className={style.panes}>
         {items.map((item, i) => i % 2 === 0 ?
-          <Pane key={i} dispatch={::dispatcher.dispatch} pane={item} /> :
-          <Border key={i} dispatch={::dispatcher.dispatch} border={item} />
+          <Pane key={i} dispatch={::dispatcher.dispatch} trigger={::store.addTrigger} release={::store.removeTrigger} pane={item} /> :
+          <Border key={i} dispatch={::dispatcher.dispatch} trigger={::store.addTrigger} release={::store.removeTrigger} border={item} />
         )}
       </section>
     )
