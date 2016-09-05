@@ -37,6 +37,11 @@ export const store = (setup) => {
     new Pane(4, { name: 'right', width: setup.size.pane })
   ]))
 
+  const limit = {
+    low: setup.size.width * 0.1,
+    high: setup.size.width * 0.7
+  }
+
   const actions = (action) => {
     const { type, payload } = action
     const { items } = stores[0]
@@ -52,6 +57,7 @@ export const store = (setup) => {
           left.hidden = true
           border.hidden = true
           right.width += left.width + border.width
+
         } else {
           left.hidden = false
           border.hidden = false
@@ -98,6 +104,9 @@ export const store = (setup) => {
 
         left.width += offset
         right.width -= offset
+
+        if (left.width <= limit.low || left.width >= limit.high) return
+        if (right.width <= limit.low || right.width >= limit.high) return
 
         stores[0].trigger(payload.id - 1, { width: left.width })
         stores[0].trigger(payload.id + 1, { width: right.width })

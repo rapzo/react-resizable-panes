@@ -24,7 +24,8 @@ const initialState = (size) => ({
 // helper so math is not spreaded all around
 const resize = (width) => ({
   border: defaults.borderSize,
-  pane: (width - (defaults.borders * defaults.borderSize)) / defaults.panes
+  pane: (width - (defaults.borders * defaults.borderSize)) / defaults.panes,
+  width
 })
 
 // reference for the initial, unpainted window state
