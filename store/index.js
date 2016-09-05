@@ -1,35 +1,11 @@
 import { Dispatcher } from 'flux'
-import { EventEmitter } from 'events'
 import Pane from './pane'
 import Border from './border'
+import Row from './row'
 import { HIDE_LEFT, HIDE_RIGHT, RESIZE } from './actions'
 
-class RowStore extends EventEmitter {
-  constructor (items) {
-    super()
-
-    this.items = items
-  }
-
-  getItems () {
-    return this.items
-  }
-
-  trigger (e, payload) {
-    this.emit(e, payload)
-  }
-
-  addTrigger (e, callback) {
-    this.on(e, callback)
-  }
-
-  removeTrigger (e, cb) {
-    this.removeListener(e, cb)
-  }
-}
-
 export const store = (setup) => {
-  const stores = setup.rows.map((row) => new RowStore([
+  const stores = setup.rows.map((row) => new Row([
     new Pane(0, { name: 'left', width: setup.size.pane }),
     new Border(1, { name: 'left', width: setup.size.border }),
     new Pane(2, { name: 'main', width: setup.size.pane }),
