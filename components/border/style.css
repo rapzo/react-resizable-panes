@@ -1,4 +1,5 @@
 .border {
+  position: relative;
   background: black;
   height: 100%;
   float: left;
