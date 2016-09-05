@@ -1,7 +1,19 @@
 import React, { Component } from 'react'
 import style from './style.css'
 
+/**
+ * Class for the pane component
+ * The pane component should have a keyboard handler event to trigger selection
+ * and deselection when triggered.
+ * The pane should update its width when a border is moved
+ * The pane should hide itself when the parent container receives a hide keyboard
+ * event
+ */
 export default class Pane extends Component {
+
+  /**
+   * Populates the internal state and properties from parent container
+   */
   constructor (props) {
     super(props)
 
@@ -13,6 +25,9 @@ export default class Pane extends Component {
     }
   }
 
+  /**
+   * Adds proper state update and re-render trigger to the store
+   */
   componentDidMount () {
     const { pane, trigger } = this.props
 
@@ -21,6 +36,9 @@ export default class Pane extends Component {
     trigger(pane.id, (payload) => this.handleUpdate(payload))
   }
 
+  /**
+   * Unregisters the previous registered triggers
+   */
   componentWillUnmount () {
     const { pane, release } = this.props
 
@@ -29,6 +47,10 @@ export default class Pane extends Component {
     release(pane.id, (payload) => this.handleUpdate(payload))
   }
 
+  /**
+   * Handler method for dealing with keyboard interaction
+   * Identifies if the proper select combination was produced altering its state
+   */
   handleKeyDown (e) {
     if (!this.state.hover || !e.ctrlKey) return;
 
@@ -42,6 +64,10 @@ export default class Pane extends Component {
     }
   }
 
+  /**
+   * Handler method for dealing when the mouse enters the pane, setting its state
+   * to identify the mouse over event
+   */
   handleEnter () {
     // if already there - for changing windows situations that would trigger a
     // re-render
@@ -52,16 +78,27 @@ export default class Pane extends Component {
     })
   }
 
+  /**
+   * Handler method for dealing when the mouse leaves the pane, setting its state
+   * to identify the mouse out event
+   */
   handleOut () {
     this.setState({
       hover: false
     })
   }
 
+  /**
+   * Handler function triggered by the store to create a state update and component
+   * re-render
+   */
   handleUpdate (state) {
     this.setState(state)
   }
 
+  /**
+   * Component method that renders it to the dom tree
+   */
   render () {
     const { pane } = this.props
     const { selected, width } = this.state

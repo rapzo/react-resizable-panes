@@ -34,6 +34,12 @@ const state = initialState(resize(window.innerWidth))
 // sets up the state machine
 const { dispatcher, stores } = store(state)
 
+
+/**
+ * Application container responsible for application wide events, such as
+ * controlling the panes and borders store and dom level events such as
+ * window resize and keyboard events
+ */
 export default class App extends Component {
   constructor () {
     super()
@@ -44,22 +50,34 @@ export default class App extends Component {
     }
   }
 
+  /**
+   * Registers dom events to component state update actions
+   */
   componentDidMount () {
     window.addEventListener('resize', () => this.handleResize())
     document.addEventListener('keydown', (e) => this.handleKeyDown(e))
   }
 
+  /**
+   * Unregisters dom events to component state update actions
+   */
   componentWillUnmount () {
     window.removeEventListener('resize', () => this.handleResize())
     document.removeEventListener('keydown', (e) => this.handleKeyDown(e))
   }
 
+  /**
+   * Handler method that triggers state updates when the window is resized
+   */
   handleResize () {
     this.setState({
       size: resize(window.innerWidth)
     })
   }
 
+  /**
+   * Hanlder method that parses keyboard events into proper dispatcher calls
+   */
   handleKeyDown (e) {
     if (!e.ctrlKey) return;
 
@@ -79,6 +97,9 @@ export default class App extends Component {
     }
   }
 
+  /**
+   * Component render method
+   */
   render () {
     const store = this.state.items[0]
     const { items } = store
