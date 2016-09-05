@@ -4,6 +4,22 @@ react-resizable-panes
 A quick implementation of a 3 pane display with highlighting, hiding and resizable border actions.
 
 
+Running and developing
+----------------------
+
+Kindly inspired in the [frontend-boilerplate](https://github.com/tj/frontend-boilerplate) put together by TJ Holowaychuk, this module can be tested by opening the `index.html` file in the `dist` folder or, if you want to try out anything:
+
+```
+npm install
+npm run start
+```
+
+If you want to produce a stable build, updating `dist` folder contents run:
+
+```
+npm run build
+```
+
 Keyboard support
 ----------------
 
@@ -13,7 +29,7 @@ Keyboard support
 
 All actions are "toggable", which means when pressing the second time it will undo the previous action
 
-Limits
+Rules
 ------
 
 - No pane should be smaller than 10% of the viewport width
