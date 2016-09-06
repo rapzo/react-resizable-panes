@@ -162,10 +162,6 @@ export default class Pane extends Component {
         onMouseLeave={::this.handleLeave}
       >
         {border}
-        <ul>
-          <li>Mouse hover: <strong>{String(hover)}</strong></li>
-          <li>Width: <strong>{styles.width}</strong></li>
-        </ul>
       </div>
     )
   }

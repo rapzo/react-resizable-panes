@@ -486,31 +486,7 @@ webpackJsonp([1],{
 	          onMouseEnter: this.handleEnter.bind(this),
 	          onMouseLeave: this.handleLeave.bind(this)
 	        },
-	        border,
-	        _react2.default.createElement(
-	          'ul',
-	          null,
-	          _react2.default.createElement(
-	            'li',
-	            null,
-	            'Mouse hover: ',
-	            _react2.default.createElement(
-	              'strong',
-	              null,
-	              String(hover)
-	            )
-	          ),
-	          _react2.default.createElement(
-	            'li',
-	            null,
-	            'Width: ',
-	            _react2.default.createElement(
-	              'strong',
-	              null,
-	              styles.width
-	            )
-	          )
-	        )
+	        border
 	      );
 	    }
 	  }]);
