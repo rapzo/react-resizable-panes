@@ -17,31 +17,21 @@ export default class Border extends Component {
     super(props)
 
     this.state = {
-      position: 'relative',
-      x: 0,
-      moved: false,
-      locked: false,
-      grabbed: false,
-      hidden: false
+      grabbed: false
     }
-  }
-
-  /**
-   * Action called by the store that create a component render
-   * @type {Object} the state produced by the store
-   */
-  handleUpdate (state) {
-    this.setState(state)
   }
 
   /**
    * Handler method to help with the mouse-down event
    * Updates the state with the `grabbed` flag on
    */
-  handleGrab (e) {
-    this.setState({ grabbed: true, x: e.target.offsetLeft })
-    document.addEventListener('mousemove', (e) => this.handleDrag(e))
-    document.addEventListener('mouseup', (e) => this.handleRelease(e))
+  handleGrab () {
+    this.setState({
+      grabbed: true
+    }, () => {
+      document.addEventListener('mousemove', (e) => this.handleDrag(e))
+      document.addEventListener('mouseup', (e) => this.handleRelease(e))
+    })
   }
 
   /**
@@ -58,12 +48,11 @@ export default class Border extends Component {
 
     this.setState({
       grabbed: false,
-      dragging: false,
-      x: e.target.offsetLeft
+      dragging: false
+    }, () => {
+      document.removeEventListener('mousemove', () => {})
+      document.removeEventListener('mouseup', () => {})
     })
-
-    document.removeEventListener('mousemove', (e) => this.handleDrag(e))
-    document.removeEventListener('mouseup', (e) => this.handleRelease(e))
   }
 
   /**
@@ -71,8 +60,6 @@ export default class Border extends Component {
    * Dispatches the action `RESIZE` to the store
    */
   handleDrag (e) {
-    e.preventDefault()
-
     const { id, dispatch, width } = this.props
 
     if (!this.state.grabbed) return
@@ -80,11 +67,13 @@ export default class Border extends Component {
     // clears some crazy mouse hops where position is nowhere to be seen
     if (e.clientX <= 0) return
 
-    dispatch(actions(RESIZE, {
+    this.setState({
+      dragging: true
+    }, () => dispatch(actions(RESIZE, {
       id,
       offset: e.clientX,
       width: width
-    }))
+    })))
   }
 
   /**
@@ -95,8 +84,6 @@ export default class Border extends Component {
       <div
         className={style.border}
         onMouseDown={::this.handleGrab}
-        onMouseOver={(e) => e.preventDefault()}
-        onMouseOut={(e) => e.preventDefault()}
       />
     )
   }
