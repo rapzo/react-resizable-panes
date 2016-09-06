@@ -17,7 +17,8 @@ export const RowStore = (setup) => {
 
   const actions = (action) => {
     const { type, payload } = action
-    let left, right, main, border, item
+    let left
+    let right
 
     switch (type) {
       case HIDE_LEFT:

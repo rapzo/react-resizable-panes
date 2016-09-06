@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import actions, { RESIZE } from '../../store/actions'
 import Border from '../border'
 import style from './style.css'
 
@@ -30,8 +31,6 @@ export default class Pane extends Component {
    * Adds proper state update and re-render trigger to the store
    */
   componentDidMount () {
-    const { id, trigger } = this.props
-
     document.addEventListener('keydown', (e) => this.handleKeyDown(e))
   }
 
@@ -39,8 +38,6 @@ export default class Pane extends Component {
    * Unregisters the previous registered triggers
    */
   componentWillUnmount () {
-    const { release } = this.props
-
     document.removeEventListener('keydown', (e) => this.handleKeyDown(e))
   }
 
@@ -62,9 +59,7 @@ export default class Pane extends Component {
    * Handler method for dealing when the mouse enters the pane, setting its state
    * to identify the mouse over event
    */
-  handleEnter (e) {
-    const { id, dispatch } = this.props
-
+  handleEnter () {
     // if already there - for changing windows situations that would trigger a
     // re-render
     if (this.state.hover) return;
@@ -78,9 +73,7 @@ export default class Pane extends Component {
    * Handler method for dealing when the mouse leaves the pane, setting its state
    * to identify the mouse out event
    */
-  handleLeave (e) {
-    const { id, dispatch } = this.props
-
+  handleLeave () {
     this.setState({
       hover: false
     })
@@ -91,7 +84,7 @@ export default class Pane extends Component {
    * Dispatches the action `RESIZE` to the store
    */
   handleDrag (e) {
-    const { border, dispatch } = this.props
+    const { dispatch } = this.props
 
     // clears some crazy mouse hops where position is nowhere to be seen
     if (e.clientX <= 0) return
@@ -125,7 +118,7 @@ export default class Pane extends Component {
    */
   render () {
     const { id, dispatch, pane } = this.props
-    const { width, hidden, hover, selected } = this.state
+    const { width, selected } = this.state
     const styles = {
       width: `${pane.width}px`,
       background: selected ? 'red' : 'green',

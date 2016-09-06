@@ -49,18 +49,21 @@ export default class Border extends Component {
    * Updates the state with the `grabbed` flag off
    */
   handleRelease (e) {
-    this.setState({ grabbed: false, x: e.target.offsetLeft })
+    const { id, dispatch } = this.props
+
+    dispatch(actions(RESIZE, {
+      id,
+      offset: e.clientX
+    }))
+
+    this.setState({
+      grabbed: false,
+      dragging: false,
+      x: e.target.offsetLeft
+    })
+
     document.removeEventListener('mousemove', (e) => this.handleDrag(e))
     document.removeEventListener('mouseup', (e) => this.handleRelease(e))
-  }
-
-  /**
-   * Handler method that flags the drag start
-   */
-  handleDragStart (e) {
-    this.setState({
-      dragging: true
-    })
   }
 
   /**
@@ -85,25 +88,6 @@ export default class Border extends Component {
   }
 
   /**
-   * Handler method that flags the drop of the draggable component
-   * Dispatches the action `RESIZE` to the store to update with the
-   * latest coordinates for the leftmost and rightmost panes
-   * Flags the end of the drag event
-   */
-  handleDragEnd (e) {
-    const { id, dispatch } = this.props
-
-    dispatch(actions(RESIZE, {
-      id,
-      offset: e.clientX
-    }))
-
-    this.setState({
-      dragging: false
-    })
-  }
-
-  /**
    * Component method that renders it to the dom tree
    */
   render () {
@@ -113,7 +97,7 @@ export default class Border extends Component {
         onMouseDown={::this.handleGrab}
         onMouseOver={(e) => e.preventDefault()}
         onMouseOut={(e) => e.preventDefault()}
-      ></div>
+      />
     )
   }
 }

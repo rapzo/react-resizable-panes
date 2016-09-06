@@ -10,6 +10,6 @@ export default class Pane {
   }
 
   toString () {
-    return id
+    return this.id
   }
 }
