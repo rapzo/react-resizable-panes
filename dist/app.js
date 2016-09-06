@@ -52,7 +52,7 @@ webpackJsonp([1],{
 
 	var _store = __webpack_require__(173);
 
-	var _actions = __webpack_require__(166);
+	var _actions = __webpack_require__(165);
 
 	var _actions2 = _interopRequireDefault(_actions);
 
@@ -248,7 +248,11 @@ webpackJsonp([1],{
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _border = __webpack_require__(165);
+	var _actions = __webpack_require__(165);
+
+	var _actions2 = _interopRequireDefault(_actions);
+
+	var _border = __webpack_require__(166);
 
 	var _border2 = _interopRequireDefault(_border);
 
@@ -302,11 +306,6 @@ webpackJsonp([1],{
 	    value: function componentDidMount() {
 	      var _this2 = this;
 
-	      var _props = this.props;
-	      var id = _props.id;
-	      var trigger = _props.trigger;
-
-
 	      document.addEventListener('keydown', function (e) {
 	        return _this2.handleKeyDown(e);
 	      });
@@ -321,10 +320,7 @@ webpackJsonp([1],{
 	    value: function componentWillUnmount() {
 	      var _this3 = this;
 
-	      var release = this.props.release;
-
-
-	      document.addEventListener('keydown', function (e) {
+	      document.removeEventListener('keydown', function (e) {
 	        return _this3.handleKeyDown(e);
 	      });
 	    }
@@ -345,31 +341,15 @@ webpackJsonp([1],{
 	    }
 
 	    /**
-	     * Handler function triggered by the store to create a state update and component
-	     * re-render
-	     */
-
-	  }, {
-	    key: 'handleUpdate',
-	    value: function handleUpdate(state) {
-	      this.setState(state);
-	    }
-
-	    /**
 	     * Handler method for dealing when the mouse enters the pane, setting its state
 	     * to identify the mouse over event
 	     */
 
 	  }, {
 	    key: 'handleEnter',
-	    value: function handleEnter(e) {
-	      var _props2 = this.props;
-	      var id = _props2.id;
-	      var dispatch = _props2.dispatch;
-
+	    value: function handleEnter() {
 	      // if already there - for changing windows situations that would trigger a
 	      // re-render
-
 	      if (this.state.hover) return;
 
 	      this.setState({
@@ -384,26 +364,9 @@ webpackJsonp([1],{
 
 	  }, {
 	    key: 'handleLeave',
-	    value: function handleLeave(e) {
-	      var _props3 = this.props;
-	      var id = _props3.id;
-	      var dispatch = _props3.dispatch;
-
-
+	    value: function handleLeave() {
 	      this.setState({
 	        hover: false
-	      });
-	    }
-
-	    /**
-	     * Handler method that flags the drag start
-	     */
-
-	  }, {
-	    key: 'handleDragStart',
-	    value: function handleDragStart() {
-	      this.setState({
-	        dragging: true
 	      });
 	    }
 
@@ -415,15 +378,13 @@ webpackJsonp([1],{
 	  }, {
 	    key: 'handleDrag',
 	    value: function handleDrag(e) {
-	      var _props4 = this.props;
-	      var border = _props4.border;
-	      var dispatch = _props4.dispatch;
+	      var dispatch = this.props.dispatch;
 
 	      // clears some crazy mouse hops where position is nowhere to be seen
 
 	      if (e.clientX <= 0) return;
 
-	      dispatch(actions(RESIZE, {
+	      dispatch((0, _actions2.default)(_actions.RESIZE, {
 	        offset: e.clientX
 	      }));
 	    }
@@ -438,12 +399,12 @@ webpackJsonp([1],{
 	  }, {
 	    key: 'handleDragEnd',
 	    value: function handleDragEnd(e) {
-	      var _props5 = this.props;
-	      var border = _props5.border;
-	      var dispatch = _props5.dispatch;
+	      var _props = this.props;
+	      var border = _props.border;
+	      var dispatch = _props.dispatch;
 
 
-	      dispatch(actions(RESIZE, {
+	      dispatch((0, _actions2.default)(_actions.RESIZE, {
 	        id: border.id,
 	        offset: e.clientX
 	      }));
@@ -460,14 +421,12 @@ webpackJsonp([1],{
 	  }, {
 	    key: 'render',
 	    value: function render() {
-	      var _props6 = this.props;
-	      var id = _props6.id;
-	      var dispatch = _props6.dispatch;
-	      var pane = _props6.pane;
+	      var _props2 = this.props;
+	      var id = _props2.id;
+	      var dispatch = _props2.dispatch;
+	      var pane = _props2.pane;
 	      var _state = this.state;
 	      var width = _state.width;
-	      var hidden = _state.hidden;
-	      var hover = _state.hover;
 	      var selected = _state.selected;
 
 	      var styles = {
@@ -510,6 +469,32 @@ webpackJsonp([1],{
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	var HIDE_LEFT = exports.HIDE_LEFT = 'hide left';
+	var HIDE_RIGHT = exports.HIDE_RIGHT = 'hide right';
+	var RESIZE = exports.RESIZE = 'resize';
+
+	exports.default = function (action) {
+	  var payload = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+	  return {
+	    type: action,
+	    payload: payload
+	  };
+	};
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ruilima/dev/12FtTS/react-resizable-panes/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "actions.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+
+/***/ 166:
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ruilima/dev/12FtTS/react-resizable-panes/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ruilima/dev/12FtTS/react-resizable-panes/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -517,7 +502,7 @@ webpackJsonp([1],{
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _actions = __webpack_require__(166);
+	var _actions = __webpack_require__(165);
 
 	var _actions2 = _interopRequireDefault(_actions);
 
@@ -602,24 +587,27 @@ webpackJsonp([1],{
 	    value: function handleRelease(e) {
 	      var _this3 = this;
 
-	      this.setState({ grabbed: false, x: e.target.offsetLeft });
+	      var _props = this.props;
+	      var id = _props.id;
+	      var dispatch = _props.dispatch;
+
+
+	      dispatch((0, _actions2.default)(_actions.RESIZE, {
+	        id: id,
+	        offset: e.clientX
+	      }));
+
+	      this.setState({
+	        grabbed: false,
+	        dragging: false,
+	        x: e.target.offsetLeft
+	      });
+
 	      document.removeEventListener('mousemove', function (e) {
-	        return _this3.handleDragEnd(e);
+	        return _this3.handleDrag(e);
 	      });
 	      document.removeEventListener('mouseup', function (e) {
 	        return _this3.handleRelease(e);
-	      });
-	    }
-
-	    /**
-	     * Handler method that flags the drag start
-	     */
-
-	  }, {
-	    key: 'handleDragStart',
-	    value: function handleDragStart(e) {
-	      this.setState({
-	        dragging: true
 	      });
 	    }
 
@@ -633,10 +621,10 @@ webpackJsonp([1],{
 	    value: function handleDrag(e) {
 	      e.preventDefault();
 
-	      var _props = this.props;
-	      var id = _props.id;
-	      var dispatch = _props.dispatch;
-	      var width = _props.width;
+	      var _props2 = this.props;
+	      var id = _props2.id;
+	      var dispatch = _props2.dispatch;
+	      var width = _props2.width;
 
 
 	      if (!this.state.grabbed) return;
@@ -649,31 +637,6 @@ webpackJsonp([1],{
 	        offset: e.clientX,
 	        width: width
 	      }));
-	    }
-
-	    /**
-	     * Handler method that flags the drop of the draggable component
-	     * Dispatches the action `RESIZE` to the store to update with the
-	     * latest coordinates for the leftmost and rightmost panes
-	     * Flags the end of the drag event
-	     */
-
-	  }, {
-	    key: 'handleDragEnd',
-	    value: function handleDragEnd(e) {
-	      var _props2 = this.props;
-	      var id = _props2.id;
-	      var dispatch = _props2.dispatch;
-
-
-	      dispatch((0, _actions2.default)(_actions.RESIZE, {
-	        id: id,
-	        offset: e.clientX
-	      }));
-
-	      this.setState({
-	        dragging: false
-	      });
 	    }
 
 	    /**
@@ -702,32 +665,6 @@ webpackJsonp([1],{
 	exports.default = Border;
 
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ruilima/dev/12FtTS/react-resizable-panes/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "index.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
-
-/***/ },
-
-/***/ 166:
-/***/ function(module, exports, __webpack_require__) {
-
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/ruilima/dev/12FtTS/react-resizable-panes/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/ruilima/dev/12FtTS/react-resizable-panes/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var HIDE_LEFT = exports.HIDE_LEFT = 'hide left';
-	var HIDE_RIGHT = exports.HIDE_RIGHT = 'hide right';
-	var RESIZE = exports.RESIZE = 'resize';
-
-	exports.default = function (action) {
-	  var payload = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
-	  return {
-	    type: action,
-	    payload: payload
-	  };
-	};
-
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/ruilima/dev/12FtTS/react-resizable-panes/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "actions.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
 
@@ -1151,7 +1088,7 @@ webpackJsonp([1],{
 
 	var _row2 = _interopRequireDefault(_row);
 
-	var _actions = __webpack_require__(166);
+	var _actions = __webpack_require__(165);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1167,11 +1104,8 @@ webpackJsonp([1],{
 	    var type = action.type;
 	    var payload = action.payload;
 
-	    var left = void 0,
-	        right = void 0,
-	        main = void 0,
-	        border = void 0,
-	        item = void 0;
+	    var left = void 0;
+	    var right = void 0;
 
 	    switch (type) {
 	      case _actions.HIDE_LEFT:
@@ -1305,7 +1239,7 @@ webpackJsonp([1],{
 	  _createClass(Pane, [{
 	    key: 'toString',
 	    value: function toString() {
-	      return id;
+	      return this.id;
 	    }
 	  }]);
 
