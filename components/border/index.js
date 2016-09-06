@@ -50,7 +50,7 @@ export default class Border extends Component {
    */
   handleRelease (e) {
     this.setState({ grabbed: false, x: e.target.offsetLeft })
-    document.removeEventListener('mousemove', (e) => this.handleDragEnd(e))
+    document.removeEventListener('mousemove', (e) => this.handleDrag(e))
     document.removeEventListener('mouseup', (e) => this.handleRelease(e))
   }
 
