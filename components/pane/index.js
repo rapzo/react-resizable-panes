@@ -41,7 +41,7 @@ export default class Pane extends Component {
   componentWillUnmount () {
     const { release } = this.props
 
-    document.addEventListener('keydown', (e) => this.handleKeyDown(e))
+    document.removeEventListener('keydown', (e) => this.handleKeyDown(e))
   }
 
   handleKeyDown (e) {
@@ -56,15 +56,6 @@ export default class Pane extends Component {
     this.setState({
       selected: !this.state.selected
     })
-  }
-
-
-  /**
-   * Handler function triggered by the store to create a state update and component
-   * re-render
-   */
-  handleUpdate (state) {
-    this.setState(state)
   }
 
   /**
@@ -92,15 +83,6 @@ export default class Pane extends Component {
 
     this.setState({
       hover: false
-    })
-  }
-
-  /**
-   * Handler method that flags the drag start
-   */
-  handleDragStart () {
-    this.setState({
-      dragging: true
     })
   }
 
