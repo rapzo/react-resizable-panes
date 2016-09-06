@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import Pane from '../../components/pane'
-import Border from '../../components/border'
-import { store } from '../../store'
+import { RowStore } from '../../store'
 import actions, { HIDE_LEFT, HIDE_RIGHT } from '../../store/actions'
 import style from './style.css'
 
@@ -12,41 +11,33 @@ const defaults = {
   borderSize: 6
 }
 
-// calculates the initial state based on the window size
-const initialState = (size) => ({
-  rows: [{
-    panes: defaults.panes,
-    borders: defaults.borders
-  }],
-  size
-})
-
 // helper so math is not spreaded all around
 const resize = (width) => ({
   border: defaults.borderSize,
-  pane: (width - (defaults.borders * defaults.borderSize)) / defaults.panes,
+  pane: width / defaults.panes,
   width
 })
 
-// reference for the initial, unpainted window state
-const state = initialState(resize(window.innerWidth))
-
 // sets up the state machine
-const { dispatcher, stores } = store(state)
-
+const { dispatcher, store } = RowStore(resize(window.innerWidth))
 
 /**
  * Application container responsible for application wide events, such as
  * controlling the panes and borders store and dom level events such as
  * window resize and keyboard events
  */
-export default class App extends Component {
+export default class Row extends Component {
   constructor () {
     super()
 
     this.state = {
-      items: stores,
-      ...state
+      ...Row.getState()
+    }
+  }
+
+  static getState () {
+    return {
+      items: store.items
     }
   }
 
@@ -56,6 +47,8 @@ export default class App extends Component {
   componentDidMount () {
     window.addEventListener('resize', () => this.handleResize())
     document.addEventListener('keydown', (e) => this.handleKeyDown(e))
+
+    store.addTrigger(() => this.handleUpdate())
   }
 
   /**
@@ -64,6 +57,10 @@ export default class App extends Component {
   componentWillUnmount () {
     window.removeEventListener('resize', () => this.handleResize())
     document.removeEventListener('keydown', (e) => this.handleKeyDown(e))
+  }
+
+  handleUpdate () {
+    this.setState(Row.getState())
   }
 
   /**
@@ -86,14 +83,12 @@ export default class App extends Component {
     switch (e.keyCode) {
       case 76:
         dispatcher.dispatch(actions(HIDE_LEFT))
-        return;
+        return
       case 82:
         dispatcher.dispatch(actions(HIDE_RIGHT))
-        return;
-      case 88:
-        return;
+        return
       default:
-        return;
+        return
     }
   }
 
@@ -101,14 +96,19 @@ export default class App extends Component {
    * Component render method
    */
   render () {
-    const store = this.state.items[0]
-    const { items } = store
+    const { items } = this.state
 
     return (
       <section className={style.panes}>
-        {items.map((item, i) => i % 2 === 0 ?
-          <Pane key={i} dispatch={::dispatcher.dispatch} trigger={::store.addTrigger} release={::store.removeTrigger} pane={item} /> :
-          <Border key={i} dispatch={::dispatcher.dispatch} trigger={::store.addTrigger} release={::store.removeTrigger} border={item} />
+        {items.map((item, i) =>
+          <Pane
+            key={i}
+            pane={item}
+            id={item.id}
+            width={item.width}
+            hidden={item.hidden}
+            dispatch={::dispatcher.dispatch}
+          />
         )}
       </section>
     )

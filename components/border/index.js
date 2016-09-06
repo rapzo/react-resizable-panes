@@ -27,24 +27,6 @@ export default class Border extends Component {
   }
 
   /**
-   * Adds proper state update and re-render trigger to the store
-   */
-  componentDidMount () {
-    const { border, trigger } = this.props
-
-    trigger(border.id, (payload) => this.handleUpdate(payload))
-  }
-
-  /**
-   * Unregisters the previous registered triggers
-   */
-  componentWillUnmount () {
-    const { border, release } = this.props
-
-    release(border.id, (payload) => this.handleUpdate(payload))
-  }
-
-  /**
    * Action called by the store that create a component render
    * @type {Object} the state produced by the store
    */
@@ -58,6 +40,8 @@ export default class Border extends Component {
    */
   handleGrab (e) {
     this.setState({ grabbed: true, x: e.target.offsetLeft })
+    document.addEventListener('mousemove', (e) => this.handleDrag(e))
+    document.addEventListener('mouseup', (e) => this.handleRelease(e))
   }
 
   /**
@@ -66,6 +50,17 @@ export default class Border extends Component {
    */
   handleRelease (e) {
     this.setState({ grabbed: false, x: e.target.offsetLeft })
+    document.removeEventListener('mousemove', (e) => this.handleDragEnd(e))
+    document.removeEventListener('mouseup', (e) => this.handleRelease(e))
+  }
+
+  /**
+   * Handler method that flags the drag start
+   */
+  handleDragStart (e) {
+    this.setState({
+      dragging: true
+    })
   }
 
   /**
@@ -73,24 +68,20 @@ export default class Border extends Component {
    * Dispatches the action `RESIZE` to the store
    */
   handleDrag (e) {
-    const { border, dispatch } = this.props
+    e.preventDefault()
+
+    const { id, dispatch, width } = this.props
+
+    if (!this.state.grabbed) return
 
     // clears some crazy mouse hops where position is nowhere to be seen
     if (e.clientX <= 0) return
 
     dispatch(actions(RESIZE, {
-      id: border.id,
-      offset: e.clientX
+      id,
+      offset: e.clientX,
+      width: width
     }))
-  }
-
-  /**
-   * Handler method that flags the drag start
-   */
-  handleDragStart () {
-    this.setState({
-      dragging: true
-    })
   }
 
   /**
@@ -100,10 +91,10 @@ export default class Border extends Component {
    * Flags the end of the drag event
    */
   handleDragEnd (e) {
-    const { border, dispatch } = this.props
+    const { id, dispatch } = this.props
 
     dispatch(actions(RESIZE, {
-      id: border.id,
+      id,
       offset: e.clientX
     }))
 
@@ -116,21 +107,12 @@ export default class Border extends Component {
    * Component method that renders it to the dom tree
    */
   render () {
-    const { border } = this.props
-    const styles = {
-      width: `${border.width}px`,
-      display: border.hidden ? 'none' : 'block'
-    }
-
     return (
       <div
-        style={styles}
         className={style.border}
         onMouseDown={::this.handleGrab}
-        onMouseUp={::this.handleRelease}
-        onDrag={::this.handleDrag}
-        onDragStart={::this.handleDragStart}
-        onDragEnd={::this.handleDragEnd}
+        onMouseOver={(e) => e.preventDefault()}
+        onMouseOut={(e) => e.preventDefault()}
       ></div>
     )
   }

@@ -8,7 +8,7 @@ module.exports = {
   entry: {
     jsx: './index.js',
     html: './index.html',
-    vendor: ['react', 'react-dom']
+    vendor: ['react', 'react-dom', 'flux', 'events']
   },
   output: {
     path: path.join(__dirname, './dist'),

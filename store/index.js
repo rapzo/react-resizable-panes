@@ -1,97 +1,94 @@
 import { Dispatcher } from 'flux'
 import Pane from './pane'
-import Border from './border'
 import Row from './row'
 import { HIDE_LEFT, HIDE_RIGHT, RESIZE } from './actions'
 
-export const store = (setup) => {
-  const stores = setup.rows.map((row) => new Row([
-    new Pane(0, { name: 'left', width: setup.size.pane }),
-    new Border(1, { name: 'left', width: setup.size.border }),
-    new Pane(2, { name: 'main', width: setup.size.pane }),
-    new Border(3, { name: 'right', width: setup.size.border }),
-    new Pane(4, { name: 'right', width: setup.size.pane })
-  ]))
+export const RowStore = (setup) => {
+  const store = new Row([
+    new Pane(0, { name: 'left', width: setup.pane, border: false }),
+    new Pane(1, { name: 'main', width: setup.pane }),
+    new Pane(2, { name: 'right', width: setup.pane })
+  ])
 
   const limit = {
-    low: setup.size.width * 0.1,
-    high: setup.size.width * 0.7
+    low: setup.width * 0.1,
+    high: setup.width * 0.7
   }
 
   const actions = (action) => {
     const { type, payload } = action
-    const { items } = stores[0]
-    let left, right, main, border
+    let left, right, main, border, item
 
     switch (type) {
       case HIDE_LEFT:
-        left = items[0]
-        border = items[1]
-        right = items[2]
+        left = store.items[0]
+        right = store.items[1]
 
         if (!left.hidden) {
           left.hidden = true
-          border.hidden = true
-          right.width += left.width + border.width
-
+          right.width += left.width
+          right.border = false
         } else {
           left.hidden = false
-          border.hidden = false
-          right.width -= left.width + border.width
+          right.border = true
+          right.width -= left.width
         }
 
-        for (let i = 0; i < 2; i++) {
-          stores[0].trigger(i, { hidden: left.hidden })
-        }
-        stores[0].trigger(right.id, { width: right.width })
+        store.trigger([{
+          id: left.id,
+          hidden: left.hidden
+        }, {
+          id: right.id,
+          width: right.width
+        }])
 
         return
 
       case HIDE_RIGHT:
-        left = items[items.length - 3]
-        border = items[items.length - 2]
-        right = items[items.length - 1]
+        right = store.items[store.items.length - 1]
+        left = store.items[store.items.length - 2]
 
         if (!right.hidden) {
           right.hidden = true
-          border.hidden = true
-          left.width += right.width + border.width
+          left.width += right.width
         } else {
           right.hidden = false
-          border.hidden = false
-          left.width -= right.width + border.width
+          left.width -= right.width
         }
 
-        for (let i = 1; i < 3; i++) {
-          stores[0].trigger(items.length - i, { hidden: right.hidden })
-        }
-        stores[0].trigger(left.id, { width: left.width })
+        store.trigger([{
+          id: left.id,
+          width: left.width
+        }, {
+          id: right.id,
+          hidden: right.hidden
+        }])
 
         return
 
       case RESIZE:
-        left = items[payload.id - 1]
-        right = items[payload.id + 1]
-        border = items[payload.id]
+        left = store.items[payload.id - 1]
+        right = store.items[payload.id]
 
-        let offset = payload.offset - items
+        let offset = payload.offset - store.items
           .slice(0, payload.id)
-          .reduce((offset, item) => offset += item.width, 0)
+          .reduce((o, item) => o += item.width, 0)
+
+        if (left.width + offset <= limit.low || left.width + offset >= limit.high) return
+        if (right.width - offset <= limit.low || right.width - offset >= limit.high) return
 
         left.width += offset
         right.width -= offset
 
-        if (left.width <= limit.low || left.width >= limit.high) return
-        if (right.width <= limit.low || right.width >= limit.high) return
-
-        stores[0].trigger(payload.id - 1, { width: left.width })
-        stores[0].trigger(payload.id + 1, { width: right.width })
+        store.trigger([{
+          id: left.id,
+          width: left.width
+        }, {
+          id: right.id,
+          width: right.width
+        }])
 
         return
-
-      case LOCK:
-        return
-
       default:
         return
     }
@@ -104,6 +101,6 @@ export const store = (setup) => {
   return {
     dispatcher,
 
-    stores
+    store
   }
 }

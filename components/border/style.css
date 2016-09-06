@@ -3,5 +3,6 @@
   background: black;
   height: 100%;
   float: left;
+  width: 6px;
   cursor: col-resize;
 }

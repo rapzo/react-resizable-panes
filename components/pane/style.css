@@ -1,5 +1,6 @@
 .pane {
-  background: #eee;
+  background: green;
   height: 100%;
   float: left;
+  overflow: auto;
 }

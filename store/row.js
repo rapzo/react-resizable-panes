@@ -7,16 +7,12 @@ export default class Row extends EventEmitter {
     this.items = items
   }
 
-  getItems () {
-    return this.items
+  trigger (payload = {}) {
+    this.emit('row', payload)
   }
 
-  trigger (e, payload) {
-    this.emit(e, payload)
-  }
-
-  addTrigger (e, callback) {
-    this.on(e, callback)
+  addTrigger (callback) {
+    this.on('row', callback)
   }
 
   removeTrigger (e, cb) {

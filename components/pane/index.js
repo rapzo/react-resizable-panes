@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import Border from '../border'
 import style from './style.css'
 
 /**
@@ -20,8 +21,8 @@ export default class Pane extends Component {
     this.state = {
       hover: false,
       selected: false,
-      hidden: false,
-      width: props.pane.width
+      hidden: props.hidden,
+      width: props.width
     }
   }
 
@@ -29,46 +30,50 @@ export default class Pane extends Component {
    * Adds proper state update and re-render trigger to the store
    */
   componentDidMount () {
-    const { pane, trigger } = this.props
+    const { id, trigger } = this.props
 
     document.addEventListener('keydown', (e) => this.handleKeyDown(e))
-
-    trigger(pane.id, (payload) => this.handleUpdate(payload))
   }
 
   /**
    * Unregisters the previous registered triggers
    */
   componentWillUnmount () {
-    const { pane, release } = this.props
+    const { release } = this.props
 
-    document.removeEventListener('keydown', (e) => this.handleKeyDown(e))
-
-    release(pane.id, (payload) => this.handleUpdate(payload))
+    document.addEventListener('keydown', (e) => this.handleKeyDown(e))
   }
 
-  /**
-   * Handler method for dealing with keyboard interaction
-   * Identifies if the proper select combination was produced altering its state
-   */
   handleKeyDown (e) {
-    if (!this.state.hover || !e.ctrlKey) return;
+    if (!e.ctrlKey) return;
 
-    // `r` key
-    if (e.keyCode === 72) {
-      e.preventDefault()
+    e.preventDefault()
 
-      this.setState({
-        selected: !this.state.selected
-      })
-    }
+    if (e.keyCode !== 72) return;
+
+    if (!this.state.hover) return;
+
+    this.setState({
+      selected: !this.state.selected
+    })
+  }
+
+
+  /**
+   * Handler function triggered by the store to create a state update and component
+   * re-render
+   */
+  handleUpdate (state) {
+    this.setState(state)
   }
 
   /**
    * Handler method for dealing when the mouse enters the pane, setting its state
    * to identify the mouse over event
    */
-  handleEnter () {
+  handleEnter (e) {
+    const { id, dispatch } = this.props
+
     // if already there - for changing windows situations that would trigger a
     // re-render
     if (this.state.hover) return;
@@ -82,41 +87,83 @@ export default class Pane extends Component {
    * Handler method for dealing when the mouse leaves the pane, setting its state
    * to identify the mouse out event
    */
-  handleOut () {
+  handleLeave (e) {
+    const { id, dispatch } = this.props
+
     this.setState({
       hover: false
     })
   }
 
   /**
-   * Handler function triggered by the store to create a state update and component
-   * re-render
+   * Handler method that flags the drag start
    */
-  handleUpdate (state) {
-    this.setState(state)
+  handleDragStart () {
+    this.setState({
+      dragging: true
+    })
+  }
+
+  /**
+   * Handler method that is called on every drag event emitted by the browser
+   * Dispatches the action `RESIZE` to the store
+   */
+  handleDrag (e) {
+    const { border, dispatch } = this.props
+
+    // clears some crazy mouse hops where position is nowhere to be seen
+    if (e.clientX <= 0) return
+
+    dispatch(actions(RESIZE, {
+      offset: e.clientX
+    }))
+  }
+
+  /**
+   * Handler method that flags the drop of the draggable component
+   * Dispatches the action `RESIZE` to the store to update with the
+   * latest coordinates for the leftmost and rightmost panes
+   * Flags the end of the drag event
+   */
+  handleDragEnd (e) {
+    const { border, dispatch } = this.props
+
+    dispatch(actions(RESIZE, {
+      id: border.id,
+      offset: e.clientX
+    }))
+
+    this.setState({
+      dragging: false
+    })
   }
 
   /**
    * Component method that renders it to the dom tree
    */
   render () {
-    const { pane } = this.props
-    const { selected, width } = this.state
+    const { id, dispatch, pane } = this.props
+    const { width, hidden, hover, selected } = this.state
     const styles = {
-      width: `${width}px`,
-      background: selected ? 'green' : 'red',
+      width: `${pane.width}px`,
+      background: selected ? 'red' : 'green',
       display: pane.hidden ? 'none' : 'block'
     }
+
+    const border = pane.border ?
+      <Border className={style.border} id={id} width={width} dispatch={dispatch} /> :
+      null
 
     return (
       <div
         style={styles}
         className={style.pane}
         onMouseEnter={::this.handleEnter}
-        onMouseOut={::this.handleOut}
+        onMouseLeave={::this.handleLeave}
       >
+        {border}
         <ul>
-          <li>Mouse hover: <strong>{String(this.state.hover)}</strong></li>
+          <li>Mouse hover: <strong>{String(hover)}</strong></li>
           <li>Width: <strong>{styles.width}</strong></li>
         </ul>
       </div>

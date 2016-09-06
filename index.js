@@ -1,9 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-import App from './containers/app'
+import Row from './containers/row'
 
 ReactDOM.render(
-  <App />,
+  <Row />,
   document.getElementById('root')
 )
